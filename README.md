@@ -64,3 +64,58 @@ ionic serve
 
 # Generar build de producción
 ionic build
+
+
+
+
+
+## 📌 Justificación del problema y caracterización de usuarios objetivo
+
+### 1. Justificación del problema
+
+El consumo de series y películas ha dejado de ser una actividad puramente individual: los espectadores comparten calificaciones, reseñas y opiniones en plataformas digitales antes, durante y después de ver un título. Sin embargo, el análisis de las soluciones existentes (fuentes secundarias) revela brechas que motivan el desarrollo de **CineDebate**.
+
+**Análisis de soluciones existentes**
+
+- **Agregadores de calificaciones (IMDb, Rotten Tomatoes, Metacritic).** Ofrecen puntuaciones globales y reseñas, pero reducen la opinión del público a un número o a una clasificación binaria. La literatura periodística y divulgativa documenta que estos sistemas son vulnerables al *review bombing* (oleadas coordinadas de calificaciones extremas ajenas a la calidad de la obra) y a la manipulación de puntajes; incluso Rotten Tomatoes modificó su sistema de calificación de usuarios para mitigar este fenómeno [1][2][3]. Además, el intercambio entre usuarios es limitado: las reseñas se publican de forma aislada, sin un espacio que las confronte entre sí.
+- **Redes sociales cinéfilas (Letterboxd).** Se presenta como una red social para el descubrimiento de cine y ha ganado relevancia como espacio de registro, reseña y recomendación entre aficionados [4][5]. No obstante, su eje es el registro personal y la interacción social ligera (listas, "me gusta", comentarios), no un formato de discusión que obligue a sostener una postura con argumentos y a confrontarla con la contraria.
+- **Foros y comunidades abiertas (por ejemplo, subforos de cine en Reddit).** Permiten conversaciones extensas, pero al ser hilos abiertos y no estructurados, los argumentos se mezclan con bromas, spoilers y ataques personales, y la calidad del debate depende casi por completo de la moderación voluntaria de cada comunidad. No existe una separación explícita entre reseña, calificación y argumentación.
+
+**Problema identificado**
+
+Ninguna de las alternativas analizadas integra en un mismo espacio (a) una calificación desglosada por criterios, (b) reseñas fundamentadas y (c) **debates con estructura formal** (tesis, postura declarada, refutación y cierre con resumen), respaldados por un mecanismo de moderación que preserve la calidad de la conversación. Como consecuencia, los espectadores interesados en discutir con profundidad una obra deben recurrir a múltiples plataformas, enfrentando ruido, polarización y falta de trazabilidad de los argumentos.
+
+**Propuesta de valor**
+
+CineDebate busca cubrir esa brecha ofreciendo una plataforma donde la opinión sobre series y películas se exprese mediante reseñas, calificaciones por criterios y debates estructurados, con herramientas de votación de utilidad y moderación que privilegien la argumentación por sobre la mera reacción.
+
+---
+
+### 2. Caracterización de usuarios objetivo (proto-personas)
+
+#### 👤 Proto-persona 1: Valentina, la Crítica
+
+| Aspecto | Descripción |
+|---------|-------------|
+| **Tipo de usuario** | Crítico (usuario registrado, rol principal de la plataforma). |
+| **Características generales** | Mujer de 24 años, estudiante universitaria de Comunicación Audiovisual. Ve entre 3 y 5 títulos por semana entre películas y series, y disfruta analizar guion, dirección y actuaciones. Tiene experiencia previa con redes sociales y con plataformas de registro cinéfilo. |
+| **Necesidades principales** | Un espacio donde su opinión sea leída y contrastada con argumentos, no ahogada por comentarios triviales. Calificar más allá de una nota única. Encontrar a otras personas con criterios similares o divergentes para conversar. |
+| **Objetivos de uso** | Publicar reseñas fundamentadas, participar en debates sobre interpretaciones o finales polémicos, construir reputación como opinante confiable y descubrir títulos a partir de valoraciones de calidad. |
+| **Puntos de frustración** | Calificaciones inflacionadas o manipuladas; hilos donde los argumentos se pierden entre insultos y spoilers; imposibilidad de saber quién argumenta a favor o en contra sin leer decenas de comentarios; reseñas eliminadas o ignoradas sin explicación. |
+| **Funcionalidades que usaría** | Publicación de reseñas (RF-01), calificación por criterios (RF-02), creación de debates (RF-03), argumentación posicionada (RF-04), votación de utilidad (RF-05), búsqueda y filtrado del catálogo (RF-06), edición de aportes propios (RF-07) y reporte de contenido (RF-08). |
+| **Dispositivo de acceso probable** | Principalmente **smartphone** (uso cotidiano, después de ver un título) y **notebook** para redactar reseñas o argumentos extensos. |
+
+#### 🛡️ Proto-persona 2: Rodrigo, el Moderador
+
+| Aspecto | Descripción |
+|---------|-------------|
+| **Tipo de usuario** | Moderador (usuario con privilegios de supervisión). |
+| **Características generales** | Hombre de 32 años, profesional en el área de TI, aficionado veterano al cine y con experiencia previa como moderador voluntario en comunidades en línea. Dispone de tiempo limitado, generalmente por las tardes y fines de semana, y valora la imparcialidad y la claridad de las normas. |
+| **Necesidades principales** | Contar con una cola de reportes ordenada y priorizada, con contexto suficiente para decidir rápido. Herramientas para actuar (ocultar, restaurar, eliminar) y dejar registro del motivo. Reglas claras y aplicables de forma consistente. |
+| **Objetivos de uso** | Mantener debates respetuosos y centrados en argumentos, reducir spam, spoilers sin etiquetar y contenido ofensivo, cerrar debates agotados y garantizar que los usuarios perciban decisiones justas y transparentes. |
+| **Puntos de frustración** | Volumen de reportes sin filtros ni priorización; falta de contexto del contenido reportado; usuarios que reinciden sin consecuencias visibles; conflictos por decisiones percibidas como arbitrarias; sobrecarga de trabajo manual repetitivo. |
+| **Funcionalidades que usaría** | Gestión de reportes y moderación (RF-09), cierre de debates y resumen (RF-10), además de las funcionalidades del Crítico cuando participa como usuario (RF-01 a RF-08), en particular la lectura de reseñas y debates para evaluar el contexto de los reportes. |
+| **Dispositivo de acceso probable** | Principalmente **notebook o computador de escritorio**, por la necesidad de revisar varios reportes en paralelo, y **smartphone** para atender casos urgentes de forma puntual. |
+
+---
+
