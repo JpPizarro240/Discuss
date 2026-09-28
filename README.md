@@ -64,16 +64,15 @@ ionic serve
 
 # Generar build de producción
 ionic build
+```
 
 ---
-
-
 
 ## 📌 Justificación del problema y caracterización de usuarios objetivo
 
 ### 1. Justificación del problema
 
-El consumo de series y películas ha dejado de ser una actividad puramente individual: los espectadores comparten calificaciones, reseñas y opiniones en plataformas digitales antes, durante y después de ver un título. Sin embargo, el análisis de las soluciones existentes (fuentes secundarias) revela brechas que motivan el desarrollo de **CineDebate**.
+El consumo de series y películas ha dejado de ser una actividad puramente individual: los espectadores comparten calificaciones, reseñas y opiniones en plataformas digitales antes, durante y después de ver un título. Sin embargo, el análisis de las soluciones existentes (fuentes secundarias) revela brechas que motivan el desarrollo de **Discuss**.
 
 **Análisis de soluciones existentes**
 
@@ -87,7 +86,7 @@ Ninguna de las alternativas analizadas integra en un mismo espacio (a) una calif
 
 **Propuesta de valor**
 
-CineDebate busca cubrir esa brecha ofreciendo una plataforma donde la opinión sobre series y películas se exprese mediante reseñas, calificaciones por criterios y debates estructurados, con herramientas de votación de utilidad y moderación que privilegien la argumentación por sobre la mera reacción.
+Discuss busca cubrir esa brecha ofreciendo una plataforma donde la opinión sobre series y películas se exprese mediante reseñas, calificaciones por criterios y debates estructurados, con herramientas de votación de utilidad y moderación que privilegien la argumentación por sobre la mera reacción.
 
 ---
 
@@ -119,3 +118,14 @@ CineDebate busca cubrir esa brecha ofreciendo una plataforma donde la opinión s
 
 ---
 
+> ⚠️ **Nota aclaratoria:** Esta caracterización de usuarios es **preliminar** y se basa en **fuentes secundarias y supuestos razonados** por el equipo de desarrollo. Las proto-personas descritas son **hipotéticas** y **no provienen de entrevistas, encuestas ni observación de usuarios reales**. Deberán validarse y refinarse en etapas posteriores del proyecto mediante técnicas de investigación con usuarios.
+
+---
+
+### 📚 Referencias
+
+1. MovieWeb. *Rotten Tomatoes Review Bombing Being Challenged by New Rating System.* https://movieweb.com/rotten-tomatoes-new-rating-system-combat-review-bombing/
+2. Gulf News. *Rotten Tomatoes tweaks ratings to stop trolls.* https://gulfnews.com/amp/story/entertainment%2Fhollywood%2Frotten-tomatoes-tweaks-ratings-to-stop-trolls-1.62343770
+3. IMDb News. *Rotten Tomatoes: PR company accused of manipulating scores by paying for reviews.* https://www.imdb.com/news/ni64228331/
+4. Letterboxd. *Social film discovery.* https://letterboxd.com/
+5. The Mancunion (2026). *Letterboxd: Exposing student habits and opinions on 'the social network for film lovers'.* https://mancunion.com/2026/05/29/letterboxd-student-habits-and-opinions/
