@@ -3,6 +3,16 @@ require('dotenv').config(); // Debe ir antes de importar el pool
 const express = require('express');
 const cors = require('cors');
 const pool = require('./src/config/db');
+const authRoutes = require('./src/routes/authRoutes');
+
+// El servidor no debe arrancar sin secreto JWT
+if (!process.env.JWT_SECRET) {
+  console.error('Falta JWT_SECRET en el archivo .env');
+  process.exit(1);
+}
+if (process.env.JWT_SECRET.length < 32) {
+  console.warn('Aviso: JWT_SECRET es muy corto. Usa una cadena aleatoria de al menos 32 caracteres.');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,7 +37,7 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// (Paso 2) rutas de autenticacion  -> /api/auth
+app.use('/api/auth', authRoutes);
 // (Paso 3) rutas del CRUD          -> /api/titles
 
 // --- 404 y manejo de errores ---
