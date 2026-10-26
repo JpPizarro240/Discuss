@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Navigate, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 
@@ -17,6 +17,7 @@ import './theme/variables.css';
 
 import { AuthProvider, useAuth } from './services/auth/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
 import AppTabs from './routes/AppTabs';
 
 import LoginPage from './pages/auth/LoginPage';
@@ -26,27 +27,22 @@ setupIonicReact();
 
 const RootRedirect: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  return <Redirect to={isAuthenticated ? '/app/home' : '/login'} />;
+  return <Navigate to={isAuthenticated ? '/app/home' : '/login'} replace />;
 };
 
 const AppRoutes: React.FC = () => (
   <IonReactRouter>
     <IonRouterOutlet>
-      {/* Rutas públicas */}
-      <Route exact path="/login" component={LoginPage} />
-      <Route exact path="/register" component={RegisterPage} />
+      {/* Rutas públicas (si ya hay sesión, redirigen al catálogo) */}
+      <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
       {/* Rutas protegidas (sesión obligatoria) */}
-      <PrivateRoute path="/app">
-        <AppTabs />
-      </PrivateRoute>
+      <Route path="/app/*" element={<PrivateRoute><AppTabs /></PrivateRoute>} />
 
-      {/* Redirección raíz */}
-      <Route exact path="/">
-        <RootRedirect />
-      </Route>
-
-      <Route render={() => <Redirect to="/" />} />
+      {/* Redirección raíz y rutas desconocidas */}
+      <Route path="/" element={<RootRedirect />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </IonRouterOutlet>
   </IonReactRouter>
 );
