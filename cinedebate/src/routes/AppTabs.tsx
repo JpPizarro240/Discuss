@@ -1,16 +1,17 @@
 import React from 'react';
 import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonRouterOutlet } from '@ionic/react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { home, person } from 'ionicons/icons';
-import HomePage from '../pages/catalog/HomePage';
+import HomePage from '../pages/cataloge/HomePage';
 import ProfilePage from '../pages/profile/ProfilePage';
 
+// Se monta en /app/* (ver App.tsx). Las rutas hijas son relativas a /app.
 const AppTabs: React.FC = () => (
   <IonTabs>
     <IonRouterOutlet>
-      <Route exact path="/app/home" component={HomePage} />
-      <Route exact path="/app/profile" component={ProfilePage} />
-      <Route exact path="/app" render={() => <Redirect to="/app/home" />} />
+      <Route path="home" element={<HomePage />} />
+      <Route path="profile" element={<ProfilePage />} />
+      <Route index element={<Navigate to="home" replace />} />
     </IonRouterOutlet>
     <IonTabBar slot="bottom">
       <IonTabButton tab="home" href="/app/home">
