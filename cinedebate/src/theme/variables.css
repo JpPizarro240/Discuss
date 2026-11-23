@@ -1,2 +1,28 @@
 /* For information on how to create your own theme, please refer to:
 http://ionicframework.com/docs/theming/ */
+
+/* Paleta de CineDebate: un vino profundo en vez del azul por defecto de Ionic,
+   para que la app no se vea como una plantilla generica. Solo se sobreescribe
+   el color primario (el que mas se repite: botones, enlaces, barra superior);
+   el resto de los colores de Ionic (success, danger, medium...) se dejan como
+   estan porque ya cumplen su función (verde = abierto, rojo = error, etc). */
+:root {
+  --ion-color-primary: #4a2545;
+  --ion-color-primary-rgb: 74, 37, 69;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #41203d;
+  --ion-color-primary-tint: #5c3b58;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* En modo oscuro el mismo tono pero un poco mas claro, para que no se pierda sobre fondo negro */
+    --ion-color-primary: #8a5c84;
+    --ion-color-primary-rgb: 138, 92, 132;
+    --ion-color-primary-contrast: #000000;
+    --ion-color-primary-contrast-rgb: 0, 0, 0;
+    --ion-color-primary-shade: #795174;
+    --ion-color-primary-tint: #966c90;
+  }
+}

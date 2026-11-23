@@ -1,0 +1,125 @@
+/* Estilos globales de la app (separados de variables.css: ahi van los
+   tokens de color, aqui van reglas normales de CSS). */
+
+ion-title,
+h1,
+h2,
+h3 {
+  font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Ancho de lectura comodo en pantallas grandes, sin tocar el layout en celular */
+.page-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* --- Catalogo: tarjetas tipo "poster" en grilla --- */
+.poster-placeholder {
+  height: 96px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ion-color-primary);
+}
+
+.poster-placeholder ion-icon {
+  font-size: 40px;
+  color: var(--ion-color-primary-contrast);
+  opacity: 0.9;
+}
+
+.title-card-grid {
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.title-card-grid:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.synopsis-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--ion-color-medium-shade);
+  font-size: 0.88rem;
+}
+
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.rating-badge ion-icon {
+  font-size: 14px;
+}
+
+.star-rating {
+  margin: 4px 0 16px;
+}
+
+/* --- Debates y argumentos --- */
+.debate-card,
+.argument-card {
+  margin-bottom: 10px;
+}
+
+.argument-card.own-argument {
+  border-left: 3px solid var(--ion-color-primary);
+}
+
+.stance-chip {
+  text-transform: capitalize;
+}
+
+/* Funcion anti-spoiler: caja que reemplaza el contenido de un argumento
+   marcado como spoiler, hasta que el lector decide mostrarlo */
+.spoiler-hidden {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--ion-color-light);
+  border: 1px dashed var(--ion-color-medium);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  color: var(--ion-color-medium-shade);
+}
+
+.spoiler-hidden ion-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* --- Encabezado de marca para login/registro --- */
+.brand-header {
+  text-align: center;
+  padding: 40px 0 16px;
+}
+
+.brand-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--ion-color-primary);
+}
+
+.brand-header p {
+  margin: 4px 0 0;
+  color: var(--ion-color-medium);
+}
+
+.auth-form-wrap {
+  max-width: 420px;
+  margin: 0 auto;
+}
