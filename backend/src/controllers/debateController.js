@@ -7,6 +7,10 @@ function parseId(value) {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+// Filtros por query string (?title_id=&status=) en vez de rutas anidadas
+// tipo /titles/:id/debates. Es el mismo estilo que ya usa titleController
+// para type/genre/q, asi no hay dos convenciones de rutas distintas en la API.
+
 // GET /api/debates?title_id=&status=&limit=&offset=   (publico)
 async function list(req, res, next) {
   try {
@@ -73,6 +77,8 @@ async function close(req, res, next) {
     const debate = await debateService.getById(id);
     if (!debate) return res.status(404).json({ error: 'Debate no encontrado' });
 
+    // "Dueno o admin" es una regla por fila, no un rol fijo, asi que no se
+    // puede usar requireRole aca: se compara a mano con el usuario del token.
     const isOwner = debate.user_id === req.user.id;
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Solo el creador o un admin puede cerrar este debate' });

@@ -3,6 +3,10 @@ const pool = require('../config/db');
 // Todas las consultas usan parametros ($1, $2...) para evitar inyeccion SQL.
 const COLUMNS = 'id, title_id, user_id, thesis, category, status, created_at';
 
+// El WHERE se arma dinamico porque title_id y status son opcionales: si
+// vienen los dos se filtra por ambos, si no vienen ninguno se listan todos.
+// params.length da el numero correcto de cada $N a medida que se van
+// agregando condiciones (si solo hay un filtro, ese filtro es $1; si hay dos, $1 y $2).
 async function list({ title_id, status, limit, offset }) {
   const conditions = [];
   const params = [];

@@ -24,13 +24,19 @@ import AppTabs from './routes/AppTabs';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 
-setupIonicReact();
+setupIonicReact(); // inicializa los componentes web de Ionic antes de renderizar
 
+// Decide a donde mandar "/" segun si hay sesion o no. Se usa en vez de poner
+// directamente <Navigate to="/app/home" /> porque sin esto alguien sin login
+// terminaria cayendo en una ruta protegida y PrivateRoute lo rebotaria igual,
+// mejor decidirlo de una vez aca.
 const RootRedirect: React.FC = () => {
   const { isAuthenticated } = useAuth();
   return <Navigate to={isAuthenticated ? '/app/home' : '/login'} replace />;
 };
 
+// Arbol de rutas de toda la app. PublicRoute/PrivateRoute son los que
+// realmente deciden si se puede entrar o no (ver src/routes).
 const AppRoutes: React.FC = () => (
   <IonReactRouter>
     <IonRouterOutlet>
@@ -48,6 +54,8 @@ const AppRoutes: React.FC = () => (
   </IonReactRouter>
 );
 
+// AuthProvider envuelve TODA la app (no solo las rutas protegidas) porque
+// hasta PublicRoute necesita saber si ya hay sesion para redirigir.
 const App: React.FC = () => (
   <IonApp>
     <AuthProvider>

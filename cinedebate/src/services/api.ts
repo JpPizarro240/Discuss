@@ -19,6 +19,10 @@ export class ApiError extends Error {
   }
 }
 
+// Este archivo es la unica parte del frontend que llama a fetch() de verdad.
+// Todos los demas services (titleService, debateService, etc.) pasan por
+// apiFetch en vez de usar fetch directo, asi el token y el manejo de errores
+// quedan en un solo lugar.
 interface ApiOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
   auth?: boolean; // false = no enviar el token (login, registro, rutas publicas)
@@ -53,7 +57,9 @@ export async function apiFetch<T>(path: string, options: ApiOptions = {}): Promi
   }
 
   if (!response.ok) {
-    // Interceptor: si habia sesion y el servidor responde 401, se cierra la sesion
+    // Interceptor: si habia sesion y el servidor responde 401 (token vencido
+    // o invalido), se cierra la sesion sola y se avisa con un evento del
+    // navegador en vez de importar AuthContext aca (evitaria import circular)
     if (response.status === 401 && token) {
       clearSession();
       window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));

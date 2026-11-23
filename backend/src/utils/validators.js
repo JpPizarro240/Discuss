@@ -22,7 +22,8 @@ function validateRegister(body) {
   if (typeof password !== 'string') {
     errors.push('password: es obligatoria');
   } else {
-    // bcrypt solo procesa los primeros 72 bytes
+    // bcrypt solo procesa los primeros 72 bytes del string, el resto lo
+    // ignora en silencio, por eso se limita el largo maximo aca
     if (password.length < 8 || Buffer.byteLength(password, 'utf8') > 72) {
       errors.push('password: debe tener entre 8 y 72 caracteres');
     }

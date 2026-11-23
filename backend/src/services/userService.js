@@ -21,4 +21,7 @@ async function createUser({ username, email, passwordHash }) {
   return rows[0];
 }
 
+// No hay updateUser ni deleteUser: ningun RF del proyecto pide editar o
+// borrar un usuario, asi que no se agrego funcionalidad que despues no
+// sabria explicar en la defensa.
 module.exports = { findByEmail, createUser };

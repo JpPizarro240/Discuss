@@ -11,7 +11,9 @@
 CREATE DATABASE cinedebate;
 \connect cinedebate
 
--- Limpieza (permite volver a ejecutar el script en desarrollo)
+-- Limpieza (permite volver a ejecutar el script en desarrollo).
+-- El orden importa: se borra primero lo que depende de otra tabla por FK,
+-- si no Postgres tira error de dependencia.
 DROP TABLE IF EXISTS ratings        CASCADE;
 DROP TABLE IF EXISTS argument_votes CASCADE;
 DROP TABLE IF EXISTS arguments CASCADE;
@@ -22,6 +24,8 @@ DROP TABLE IF EXISTS users     CASCADE;
 -- ---------------------------------------------------------------------
 -- Usuarios (roles: 'user' = Critico, 'admin' = Moderador)
 -- ---------------------------------------------------------------------
+-- GENERATED ALWAYS AS IDENTITY es el reemplazo moderno de SERIAL para ids
+-- autoincrementales; se usa igual en todas las tablas de este archivo.
 CREATE TABLE users (
     id            INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username      VARCHAR(30)  NOT NULL UNIQUE,
@@ -85,7 +89,9 @@ CREATE TABLE arguments (
 -- ---------------------------------------------------------------------
 -- Votos de utilidad sobre un argumento (RF-05: un voto por usuario,
 -- util o no util; no se permite votar el propio argumento, esa regla
--- se valida en el backend porque necesita comparar con el usuario autenticado)
+-- se valida en el backend porque necesita comparar con el usuario autenticado).
+-- La restriccion UNIQUE de abajo es la que de verdad impide el voto doble:
+-- aunque el frontend desactive el boton, la base de datos lo rechaza igual.
 -- ---------------------------------------------------------------------
 CREATE TABLE argument_votes (
     id          INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

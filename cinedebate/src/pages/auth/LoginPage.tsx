@@ -30,9 +30,12 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       await login(email.trim(), password);
+      // replace: true para que el boton "atras" del navegador no vuelva al login
       navigate('/app/home', { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
+        // mismo mensaje generico que ya da el backend para 401, no se distingue
+        // si fue el correo o la contraseña la que fallo
         setErrors([err.status === 401 ? 'Correo o contraseña incorrectos.' : err.message]);
       } else {
         setErrors(['Ocurrió un error inesperado.']);

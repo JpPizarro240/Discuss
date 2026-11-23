@@ -50,6 +50,8 @@ async function create({ name, type, genre = null, release_year = null, synopsis 
   return rows[0];
 }
 
+// Mismo truco de SQL dinamico que debateService.list, pero para un UPDATE:
+// solo se agregan al SET las columnas que de verdad llegaron en el body.
 async function update(id, fields) {
   const sets = [];
   const params = [];

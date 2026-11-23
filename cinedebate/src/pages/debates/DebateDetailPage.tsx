@@ -40,6 +40,9 @@ const DebateDetailPage: React.FC = () => {
 
   const [debate, setDebate] = useState<Debate | null>(null);
   const [args, setArgs] = useState<Argument[]>([]);
+  // Guarda que argumentos con spoiler el usuario ya decidio mostrar en esta
+  // visita (se resetea si recarga la pagina; no se guarda en el backend
+  // porque es solo una preferencia de lectura, no un dato del argumento)
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -149,8 +152,8 @@ const DebateDetailPage: React.FC = () => {
               )}
 
               {args.map((a) => {
-                const isOwn = a.user_id === user?.id;
-                const isHidden = a.has_spoilers && !revealed[a.id];
+                const isOwn = a.user_id === user?.id; // controla el boton de voto deshabilitado
+                const isHidden = a.has_spoilers && !revealed[a.id]; // funcion anti-spoiler
                 return (
                   <IonCard key={a.id} className={`argument-card ${isOwn ? 'own-argument' : ''}`}>
                     <IonCardContent>

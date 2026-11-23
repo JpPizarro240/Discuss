@@ -17,6 +17,8 @@ async function getById(id) {
 }
 
 async function create({ debate_id, user_id, parent_id = null, stance, content, has_spoilers = false }) {
+  // RETURNING evita tener que hacer un segundo SELECT despues del INSERT
+  // para devolver la fila recien creada al controller.
   const { rows } = await pool.query(
     `INSERT INTO arguments (debate_id, user_id, parent_id, stance, content, has_spoilers)
      VALUES ($1, $2, $3, $4, $5, $6)

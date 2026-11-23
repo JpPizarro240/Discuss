@@ -11,6 +11,9 @@ function verifyToken(req, res, next) {
   }
 
   try {
+    // algorithms: ['HS256'] fija a mano con que algoritmo se firma el token.
+    // Sin esto, alguien podria mandar un JWT firmado con otro algoritmo y
+    // jwt.verify igual lo aceptaria.
     const payload = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
     req.user = { id: payload.id, username: payload.username, role: payload.role };
     return next();
@@ -20,7 +23,11 @@ function verifyToken(req, res, next) {
   }
 }
 
-// Restringe una ruta a ciertos roles. Debe usarse despues de verifyToken.
+// Restringe una ruta a ciertos roles fijos (ej: solo 'admin'). Debe usarse
+// despues de verifyToken porque necesita req.user ya cargado.
+// Para el caso "el dueno del recurso o un admin" esto no sirve (el rol
+// permitido depende de cada fila), por eso esa validacion se hace a mano
+// dentro del controller (ver debateController.close, titleController.update).
 function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {

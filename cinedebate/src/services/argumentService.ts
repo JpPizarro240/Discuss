@@ -5,6 +5,9 @@ export interface VoteCounts {
   not_useful: number;
 }
 
+// votes no viene de la tabla arguments: el backend lo calcula al vuelo
+// contando argument_votes (ver argumentService.js getVoteCounts), por eso
+// esta aca junto al resto de los datos del argumento.
 export interface Argument {
   id: number;
   debate_id: number;

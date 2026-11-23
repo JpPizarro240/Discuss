@@ -1,5 +1,7 @@
 const pool = require('../config/db');
 
+// Mismo patron de upsert que ratingService: una sola funcion para "votar" y
+// "cambiar el voto", en vez de tener un POST para crear y un PUT separado.
 // Un voto por usuario y argumento (UNIQUE en la tabla argument_votes).
 // Si el usuario ya habia votado ese argumento, se actualiza su voto en vez
 // de crear uno nuevo (asi "un voto por usuario" se cumple a nivel de BD).

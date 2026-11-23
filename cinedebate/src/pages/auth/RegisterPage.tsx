@@ -42,6 +42,9 @@ const RegisterPage: React.FC = () => {
       navigate('/app/home', { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
+        // err.details trae la lista de validaciones que fallaron en el
+        // backend (username, email, password); si no hay detalle especifico
+        // se muestra el mensaje general (ej: usuario o correo ya existen)
         setErrors(err.details.length > 0 ? err.details : [err.message]);
       } else {
         setErrors(['Ocurrió un error inesperado.']);

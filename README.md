@@ -134,118 +134,73 @@ Discuss busca cubrir esa brecha ofreciendo una plataforma donde la opinión sobr
 
 ## 🧭 EP 1.4: Arquitectura de Navegación y Experiencia del Usuario
 
-La arquitectura de navegación de **Discuss** se organiza como una aplicación de una sola página (SPA) con **`IonReactRouter`**, combinando una barra de pestañas persistente (`IonTabs`) para las secciones de primer nivel con pilas de navegación independientes (`IonRouterOutlet`) por pestaña, de modo que cada rama del árbol mantiene su propio historial sin perder el estado de las demás.
+La navegación de **CineDebate** es una SPA con `IonReactRouter`. Hay dos grupos de rutas: públicas (login/registro, sin sesión) y protegidas (todo lo que empieza en `/app`, requiere sesión iniciada). Dentro de `/app` hay una barra de pestañas (`IonTabs`) con solo dos secciones de primer nivel — **Catálogo** y **Perfil** — y dos vistas de detalle (título, debate) a las que se llega navegando desde el catálogo, sin ser pestañas propias.
 
 ### a) Rutas principales y secundarias (URLs)
 
 | Ruta | Nivel | Vista | Rol requerido | Descripción |
 |------|-------|-------|----------------|--------------|
 | `/login` | Principal | Inicio de sesión | Público | Autenticación de usuarios existentes. |
-| `/register` | Principal | Registro | Público | Alta de nuevas cuentas (rol Crítico por defecto). |
-| `/app/home` | Principal | Catálogo / Home | Crítico, Moderador | Listado de títulos destacados y recientes (tab 1). |
-| `/app/home/title/:id` | Secundaria | Detalle de título | Crítico, Moderador | Ficha del título con pestañas internas (Reseñas, Calificación, Debates). |
-| `/app/home/title/:id/reviews` | Secundaria | Listado de reseñas | Crítico, Moderador | Reseñas del título (RF-01). |
-| `/app/home/title/:id/reviews/new` | Terciaria | Nueva reseña | Crítico | Formulario de publicación (RF-01). |
-| `/app/home/title/:id/rating` | Secundaria | Calificación por criterios | Crítico | Formulario de calificación desglosada (RF-02). |
-| `/app/home/title/:id/debates` | Secundaria | Listado de debates del título | Crítico, Moderador | Debates asociados a ese título (RF-03). |
-| `/app/home/title/:id/debates/new` | Terciaria | Nuevo debate | Crítico | Creación de tesis y categoría (RF-03). |
-| `/app/debate/:debateId` | Secundaria | Detalle del debate | Crítico, Moderador | Argumentos por postura, votación y respuestas (RF-04, RF-05). |
-| `/app/debate/:debateId/argument/new` | Terciaria | Nuevo argumento | Crítico | Publicación de argumento posicionado (RF-04). |
-| `/app/debate/:debateId/summary` | Secundaria | Resumen de cierre | Crítico, Moderador | Vista de resultados al cerrar un debate (RF-10). |
-| `/app/search` | Principal | Búsqueda y filtrado | Crítico, Moderador | Exploración del catálogo (RF-06) (tab 2). |
-| `/app/debates` | Principal | Debates activos (global) | Crítico, Moderador | Debates abiertos en toda la plataforma (tab 3). |
-| `/app/notifications` | Principal | Notificaciones | Crítico, Moderador | Avisos de respuestas, votos y resultados de reportes (tab 4). |
-| `/app/profile` | Principal | Perfil propio | Crítico, Moderador | Reseñas, calificaciones y debates del usuario (tab 5). |
-| `/app/profile/:username` | Secundaria | Perfil público | Crítico, Moderador | Actividad pública de otro usuario. |
-| `/app/profile/edit` | Secundaria | Edición de perfil | Crítico, Moderador | Edición y eliminación de aportes propios (RF-07). |
-| `/app/moderation` | Secundaria (condicional) | Panel de moderación | **Moderador** | Punto de entrada a las herramientas de supervisión (RF-09). |
-| `/app/moderation/reports` | Terciaria | Cola de reportes | **Moderador** | Listado priorizado de reportes pendientes (RF-08, RF-09). |
-| `/app/moderation/reports/:id` | Terciaria | Detalle de un reporte | **Moderador** | Contenido reportado + acciones de moderación (RF-09). |
-| `/app/moderation/debates/:id/close` | Terciaria | Cierre forzado de un debate | **Moderador** | Cierre anticipado con registro de motivo (RF-10). |
+| `/register` | Principal | Registro | Público | Alta de nuevas cuentas (rol Crítico por defecto; no existe forma de autoasignarse Moderador desde la app). |
+| `/app/home` | Principal (tab 1) | Catálogo | Crítico, Moderador | Grilla de títulos con calificación promedio (RF-06). |
+| `/app/titles/:id` | Secundaria | Detalle de título | Crítico, Moderador | Sinopsis, calificación con estrellas (1 a 5) y debates abiertos sobre ese título. |
+| `/app/debates/:id` | Secundaria | Detalle de debate | Crítico, Moderador | Tesis, argumentos con postura y votación de utilidad. |
+| `/app/profile` | Principal (tab 2) | Perfil propio | Crítico, Moderador | Datos de la cuenta y cierre de sesión. |
 
 ### b) Relaciones jerárquicas entre las vistas
 
 ```
-/                                       → Redirección según sesión y rol
-├── /login                             → Inicio de sesión
-├── /register                          → Registro de cuenta
+/                           → Redirección según sesión
+├── /login                 → Inicio de sesión
+├── /register               → Registro de cuenta
 │
 └── /app  (IonTabs — requiere sesión iniciada)
-    ├── /app/home                              → Catálogo / Home (tab 1)
-    │   └── /app/home/title/:id                → Detalle de título
-    │       ├── /app/home/title/:id/reviews         → Listado de reseñas
-    │       │   └── /app/home/title/:id/reviews/new     → Nueva reseña
-    │       ├── /app/home/title/:id/rating            → Calificación por criterios
-    │       └── /app/home/title/:id/debates           → Listado de debates del título
-    │           ├── /app/home/title/:id/debates/new      → Nuevo debate
-    │           └── /app/debate/:debateId                 → Detalle del debate
-    │               ├── /app/debate/:debateId/argument/new   → Nuevo argumento
-    │               └── /app/debate/:debateId/summary        → Resumen de cierre
+    ├── /app/home                  → Catálogo (tab 1)
+    │   └── /app/titles/:id        → Detalle de título
+    │       └── /app/debates/:id   → Detalle de debate
     │
-    ├── /app/search                             → Búsqueda y filtrado (tab 2)
-    ├── /app/debates                            → Debates activos globales (tab 3)
-    ├── /app/notifications                      → Notificaciones (tab 4)
-    └── /app/profile                            → Perfil propio (tab 5)
-        ├── /app/profile/:username                  → Perfil público de otro usuario
-        ├── /app/profile/edit                       → Edición de perfil
-        └── /app/moderation                         → Panel de moderación (solo Moderador)
-            ├── /app/moderation/reports                 → Cola de reportes
-            ├── /app/moderation/reports/:id             → Detalle de un reporte
-            └── /app/moderation/debates/:id/close       → Cierre forzado de un debate
+    └── /app/profile                → Perfil propio (tab 2)
 ```
 
-Cada pestaña (`Home`, `Buscar`, `Debates`, `Notificaciones`, `Perfil`) es la raíz de su propia pila de navegación; las vistas de detalle (título, debate, reporte) son hijas de esa raíz y nunca vistas de primer nivel, lo que mantiene la barra de pestañas visible y el contexto de "desde dónde llegué" siempre disponible.
+Las vistas de título y debate son hijas del catálogo (se llega a ellas haciendo clic en una tarjeta), no pestañas de primer nivel; por eso la barra de abajo se mantiene en solo 2 botones aunque la app tenga más pantallas.
 
 ### c) Flujo de navegación entre funcionalidades (task flow principal)
 
-Flujo principal: **descubrir un título → formarse una opinión → discutirla.**
+Flujo principal: **descubrir un título → calificarlo → debatirlo.**
 
-1. El usuario abre la app en `/app/home` y explora el catálogo o usa `/app/search` con filtros (RF-06).
-2. Selecciona un título → navega a `/app/home/title/:id`, donde ve el promedio de calificación y pestañas internas (Reseñas, Calificación, Debates).
-3. Desde la pestaña **Calificación**, asigna su puntuación por criterios (RF-02) sin salir de la ficha del título.
-4. Desde la pestaña **Reseñas**, puede leer aportes existentes o pulsar "Nueva reseña" → `.../reviews/new` (RF-01); al guardar, vuelve automáticamente al listado.
-5. Desde la pestaña **Debates**, entra a un debate abierto (`/app/debate/:debateId`) o crea uno nuevo (`.../debates/new`) definiendo la tesis (RF-03).
-6. Dentro del debate, antes de poder escribir, el sistema exige declarar una postura (**A favor / En contra / Neutral**); solo entonces se habilita el botón "Argumentar" → `.../argument/new` (RF-04).
-7. El usuario vota la utilidad de los argumentos de otros participantes directamente en el hilo (RF-05), sin cambiar de ruta.
-8. Si el debate se cierra (por el creador o por un Moderador), la app redirige a `.../summary`, mostrando el resumen final (RF-10).
-9. En cualquier paso, el usuario puede reportar un aporte (RF-08) mediante una acción contextual (botón o menú de opciones) que abre un modal, sin abandonar la vista actual.
-
-Flujo paralelo del Moderador: `/app/moderation/reports` → selecciona un reporte → `.../reports/:id` (ve el contenido en contexto) → decide (ocultar / restaurar / eliminar) → el sistema notifica al autor y regresa a la cola actualizada (RF-09).
+1. El usuario abre `/app/home` y explora el catálogo en grilla.
+2. Selecciona un título → navega a `/app/titles/:id`, donde ve la sinopsis y puede calificarlo de 1 a 5 estrellas (se actualiza en el momento, sin recargar la página).
+3. En la misma vista ve los debates abiertos sobre ese título, o abre uno nuevo declarando una tesis y una categoría.
+4. Entra a un debate (`/app/debates/:id`) y antes de poder publicar un argumento debe elegir una postura (**A favor / En contra / Neutral**); el formulario no se habilita sin ese dato.
+5. Al publicar, puede marcar el argumento como "contiene spoilers"; si lo hace, el argumento se muestra oculto a los demás lectores hasta que ellos mismos decidan revelarlo.
+6. Puede votar si el argumento de otro usuario es útil o no; el sistema impide votar el propio argumento y solo permite un voto por usuario (si vuelve a votar, se actualiza su voto anterior, no se duplica).
 
 ### d) Diferenciación de acceso según los roles
 
 | Aspecto | Crítico | Moderador |
 |---------|---------|-----------|
-| Pestañas visibles | Home, Buscar, Debates, Notificaciones, Perfil | Las mismas, más acceso a **Moderación** desde Perfil |
-| Rutas de creación (`/reviews/new`, `/debates/new`, `/argument/new`) | Habilitadas | Habilitadas (puede participar como Crítico) |
-| `/app/moderation/*` | **Oculta y bloqueada** (route guard redirige a `/app/home` o a una vista 403) | Habilitada |
-| Acciones de moderación (ocultar, restaurar, eliminar, cerrar debate) | No visibles en la interfaz | Visibles como acciones contextuales adicionales en reseñas, argumentos y debates |
-| Verificación de permisos | Guard declarativo (`<RoleRoute allowedRoles={['critico','moderador']}>`) evalúa el rol antes de renderizar la ruta | Igual mecanismo, con `allowedRoles={['moderador']}` en rutas exclusivas |
+| Pantallas visibles | Catálogo, título, debate, perfil | Las mismas |
+| Crear títulos, debates y argumentos | Permitido (autenticado) | Permitido |
+| Editar/eliminar un título que no creó | No permitido | Permitido |
+| Cerrar un debate que no es suyo | No permitido | Permitido |
 
-La diferenciación se implementa en dos capas: (1) a nivel de **interfaz**, ocultando o deshabilitando controles según el rol para no exponer acciones no disponibles; y (2) a nivel de **enrutamiento**, mediante guards que interceptan la navegación directa por URL. Se asume, además, que el backend replica esta validación de forma independiente, ya que el control de acceso en el frontend es una medida de usabilidad y no un mecanismo de seguridad suficiente por sí solo (ver RNF-04).
+No existe un componente de guard de rol en el frontend: la única verificación en el cliente es **si hay sesión iniciada o no** (`PrivateRoute`, redirige a `/login` si no la hay). La diferenciación por rol (Crítico vs. Moderador) se valida siempre en el backend — comparando `created_by`/`user_id` contra el usuario autenticado, o exigiendo `role = 'admin'` con el middleware `requireRole` — porque es ahí donde realmente importa que no se pueda saltar. Ocultar un botón en el frontend sería solo cosmético si el backend no lo exigiera también.
 
 ### e) Puntos críticos de interacción
 
-- **Declaración de postura obligatoria** antes de argumentar en un debate: es el punto donde más fácilmente se pierde al usuario si el flujo no es claro, por lo que se resuelve con un paso explícito (modal o selector) y no con un campo opcional dentro del formulario.
-- **Publicación de reseñas y argumentos**: incluye validación en tiempo real (longitud, etiqueta de spoiler) y confirmación visual (`IonToast`) para reducir el riesgo de publicaciones duplicadas o incompletas.
-- **Reporte de contenido**: acción de bajo compromiso pero alto impacto; se diseña como un acceso rápido (ícono contextual) para no desincentivar su uso, con un modal de un solo paso.
-- **Acciones de moderación destructivas** (ocultar, eliminar, cerrar debate): requieren confirmación explícita, ya que son reversibles solo parcialmente y afectan a terceros.
-- **Cambio de pestaña con formulario en curso**: al tener pilas de navegación independientes por tab, un borrador de reseña o argumento no se pierde si el usuario cambia de pestaña por error; se conserva en el estado del componente hasta que se publica o se descarta explícitamente.
-- **Carga de listados extensos** (reseñas, argumentos, catálogo): el punto crítico de rendimiento percibido; se resuelve con scroll infinito y paginación (RNF-02) para que la navegación no se perciba como lenta al entrar a un título con mucha actividad.
+- **Postura obligatoria antes de argumentar**: el `<select>` de postura viene con un valor por defecto, pero el backend rechaza el argumento si no es una de las tres válidas, así que nunca se guarda un argumento sin postura declarada.
+- **Spoiler oculto por defecto**: el contenido igual viaja al navegador (no es un secreto a nivel de red), pero no se muestra hasta que el lector hace clic en "Mostrar de todas formas" — suficiente para el objetivo de no arruinar la trama sin querer.
+- **Un voto por usuario, sin autovoto**: se refuerza en tres capas — el botón de votar aparece deshabilitado si el argumento es propio, el backend lo rechaza igual si se intenta saltar el frontend, y la base de datos tiene una restricción `UNIQUE` que hace imposible duplicar el voto aunque fallaran las dos anteriores.
+- **Calificación editable**: calificar un título dos veces no crea un segundo registro, actualiza el anterior (mismo mecanismo que el voto de argumentos).
 
 ### f) Coherencia de experiencia entre dispositivos (móvil y web)
 
-Al usar Ionic sobre un único código base en React, la coherencia entre plataformas se logra mediante:
-
-- **Modo adaptativo de Ionic**: los componentes (`IonTabs`, `IonHeader`, transiciones) adoptan automáticamente convenciones iOS o Material Design según la plataforma detectada, sin duplicar vistas.
-- **Layout responsivo con `IonGrid`/`IonSplitPane`**: en móvil, la navegación principal se muestra como barra de pestañas inferior; en pantallas de escritorio o tablet en horizontal, el mismo árbol de rutas se expone como un menú lateral persistente (`IonSplitPane`), sin cambiar las URLs ni la jerarquía definida en (b).
-- **Gestos nativos donde corresponde**: swipe-back y pull-to-refresh en móvil; en web se ofrecen los equivalentes por botón y teclado, manteniendo la misma acción disponible en ambos entornos.
-- **Mismo árbol de rutas y mismos guards de rol** en ambas plataformas: no existen vistas exclusivas de una plataforma para funcionalidades RF-01 a RF-10, lo que evita que un Crítico o Moderador tenga capacidades distintas según el dispositivo.
-- **Sistema visual único** (colores, tipografía, modo claro/oscuro de RNF-08) aplicado a través de variables de Ionic (`ionic.config`/CSS variables), de forma que el "salto" entre dispositivos no implique reaprender la interfaz.
+- El catálogo usa `IonGrid`/`IonRow`/`IonCol` con columnas que se adaptan al ancho (`sizeXs="12" sizeSm="6" sizeMd="4"`): una columna en celular, dos en tablet, tres en escritorio, sin rutas ni componentes distintos por dispositivo.
+- Ionic aplica automáticamente convenciones iOS o Material según la plataforma (`IonTabs`, transiciones, `IonBackButton`) sin que el proyecto tenga que duplicar vistas.
+- El mismo árbol de rutas y las mismas reglas de rol aplican en cualquier dispositivo: no hay una versión "recortada" para móvil.
 
 ### g) Justificación técnica de las decisiones adoptadas
 
-- **Usabilidad**: la estructura de pestañas de primer nivel (Home, Buscar, Debates, Notificaciones, Perfil) refleja las cinco tareas centrales del producto y mantiene la profundidad de navegación baja (máximo 3-4 niveles hasta cualquier acción), lo que reduce la carga cognitiva y el número de toques necesarios para completar el flujo principal descrito en (c).
-- **Eficiencia de interacción**: al anidar las vistas de Reseñas, Calificación y Debates como pestañas internas de un mismo título (en vez de rutas hermanas independientes), se evita recargar el contexto del título (imagen, sinopsis, promedio) cada vez que el usuario cambia de aspecto a evaluar, disminuyendo peticiones repetidas y transiciones de pantalla completa.
-- **Claridad estructural**: la separación entre rutas de **lectura** (`/reviews`, `/debates`), **creación** (`/reviews/new`, `/debates/new`, `/argument/new`) y **moderación** (`/moderation/*`) hace explícito en la propia URL qué tipo de acción se está realizando, lo que facilita tanto la comprensión del usuario como el mantenimiento del código (un componente por tipo de ruta, sin vistas mixtas).
-- **Escalabilidad de la arquitectura frontend**: el uso de guards declarativos por rol (`<RoleRoute>`) en lugar de condicionales dispersos en cada componente permite agregar futuros roles (por ejemplo, un rol "Editorial" o "Administrador") sin modificar las vistas existentes, solo registrando nuevas reglas de acceso. Combinado con `React.lazy` y rutas anidadas por `IonRouterOutlet` (ya definido en RNF-01), cada rama del árbol de navegación se carga de forma independiente, de modo que agregar nuevas vistas (por ejemplo, un futuro `/app/rankings`) no incrementa el tiempo de carga inicial de las vistas ya existentes.
+- **Simplicidad para un equipo de una persona**: dos pestañas y dos vistas de detalle son suficientes para cubrir el flujo completo (catálogo → título → debate) sin necesitar guards de rol en el frontend, rutas anidadas de tres niveles, ni un panel de moderación separado — cada ruta adicional es una ruta más que mantener y explicar en la defensa.
+- **Rutas planas con filtro por query** (`/api/debates?title_id=`, `/api/arguments?debate_id=`) en vez de rutas anidadas (`/titles/:id/debates/:id`): es el mismo patrón que ya usaba el catálogo (`/api/titles?genre=&q=`), por lo que no se introduce una convención nueva que explicar.
+- **La seguridad vive en el backend, no en el router del frontend**: ocultar un botón es una ayuda de usabilidad, no una medida de seguridad; todas las reglas de permisos (dueño, admin, un voto por usuario) se verifican también en el servidor y en la base de datos.

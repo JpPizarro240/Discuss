@@ -1,6 +1,8 @@
 const { Pool } = require('pg');
 
-// Pool de conexiones a PostgreSQL. Las credenciales vienen de variables de entorno (.env).
+// Pool de conexiones a PostgreSQL (no una conexion sola): reutiliza conexiones
+// en vez de abrir una nueva por cada consulta. Las credenciales vienen de
+// variables de entorno (.env) para no dejar la contrasena escrita en el codigo.
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT) || 5432,

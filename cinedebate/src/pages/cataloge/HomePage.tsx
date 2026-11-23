@@ -18,6 +18,9 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // "active" evita el warning de React de actualizar el estado de un
+    // componente que ya se desmonto (ej: si el usuario navega rapido y sale
+    // de esta pantalla antes de que termine el fetch)
     let active = true;
     getTitles()
       .then(async (data) => {

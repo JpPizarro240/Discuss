@@ -36,7 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(loggedUser);
   }, []);
 
-  // Registra y deja la sesion iniciada
+  // Registra y despues llama a login con las mismas credenciales: asi el
+  // usuario no tiene que volver a escribir el correo/contraseña para entrar
   const register = useCallback(
     async (username: string, email: string, password: string) => {
       await registerRequest(username, email, password);

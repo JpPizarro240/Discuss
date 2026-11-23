@@ -20,19 +20,15 @@ const CATEGORIES = [
 ];
 
 // Fila de 5 estrellas clickeables para calificar un titulo (1 a 5)
-const StarRating: React.FC<{ value: number; onRate: (v: number) => void; disabled?: boolean }> = ({
-  value,
-  onRate,
-  disabled,
-}) => (
+const StarRating: React.FC<{ value: number; onRate: (v: number) => void }> = ({ value, onRate }) => (
   <div className="star-rating">
     {[1, 2, 3, 4, 5].map((n) => (
       <IonIcon
         key={n}
         icon={n <= value ? star : starOutline}
         color="warning"
-        onClick={() => !disabled && onRate(n)}
-        style={{ fontSize: '28px', cursor: disabled ? 'default' : 'pointer', marginRight: 4 }}
+        onClick={() => onRate(n)}
+        style={{ fontSize: '28px', cursor: 'pointer', marginRight: 4 }}
       />
     ))}
   </div>
@@ -57,6 +53,9 @@ const TitleDetailPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
+  // Funcion aparte (no solo dentro del useEffect) porque tambien se llama
+  // despues de crear un debate nuevo, para refrescar la lista sin recargar
+  // toda la pagina ni volver a pedir el titulo y la calificacion otra vez.
   const loadDebates = async () => {
     const data = await getDebatesByTitle(titleId);
     setDebates(data);
@@ -81,10 +80,10 @@ const TitleDetailPage: React.FC = () => {
 
   const handleRate = async (value: number) => {
     setRatingError('');
-    setMyRating(value);
+    setMyRating(value); // se pinta la estrella al toque, no se espera la respuesta del server
     try {
       const summary = await rateTitle(titleId, value);
-      setRating(summary);
+      setRating(summary); // promedio/cantidad actualizados que devuelve la API
     } catch (err) {
       setRatingError(err instanceof ApiError ? err.message : 'No se pudo registrar la calificacion');
     }

@@ -72,6 +72,8 @@ async function update(req, res, next) {
     const existing = await titleService.getById(id);
     if (!existing) return res.status(404).json({ error: 'Titulo no encontrado' });
 
+    // Misma logica "dueno o admin" que debateController.close: se valida a
+    // mano porque depende de la fila, requireRole solo sirve para roles fijos.
     const isOwner = existing.created_by === req.user.id;
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Solo el creador o un admin puede editar este titulo' });
@@ -92,7 +94,8 @@ async function update(req, res, next) {
   }
 }
 
-// DELETE /api/titles/:id   (solo admin; el middleware ya lo verifica)
+// DELETE /api/titles/:id   (solo admin; requireRole('admin') en la ruta ya lo
+// verifica antes de llegar aca, por eso este controller no vuelve a chequear rol)
 async function remove(req, res, next) {
   try {
     const id = parseId(req.params.id);

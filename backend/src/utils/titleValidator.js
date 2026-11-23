@@ -53,6 +53,8 @@ function validateTitle(body, { partial = false } = {}) {
 
   if (input.poster_url !== undefined) {
     if (input.poster_url === null) data.poster_url = null;
+    // Se exige que empiece con http:// o https:// para no guardar cualquier
+    // texto como si fuera una URL de imagen
     else if (!isNonEmptyString(input.poster_url, 500) || !/^https?:\/\//i.test(input.poster_url.trim())) {
       errors.push('poster_url: debe ser una URL http(s) de maximo 500 caracteres');
     } else data.poster_url = input.poster_url.trim();

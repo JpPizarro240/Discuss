@@ -4,6 +4,8 @@ import {
 } from '@ionic/react';
 import { useAuth } from '../../services/auth/AuthContext';
 
+// Pantalla simple: muestra los datos del usuario logueado (vienen del token,
+// no se pide nada nuevo a la API) y el boton de cerrar sesion.
 const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
 

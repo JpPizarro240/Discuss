@@ -3,9 +3,10 @@ const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
 const { normalizeEmail, validateRegister, validateLogin } = require('../utils/validators');
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = 10; // costo del hash de bcrypt; mas alto = mas lento y mas seguro
 // Hash falso: se compara cuando el correo no existe, para que el tiempo de
-// respuesta no revele si un usuario esta registrado.
+// respuesta no revele si un usuario esta registrado (bcrypt.compare tarda
+// siempre parecido, haya o no usuario real).
 const DUMMY_HASH = bcrypt.hashSync('contrasena-falsa-123', SALT_ROUNDS);
 
 // POST /api/auth/register
@@ -53,6 +54,8 @@ async function login(req, res, next) {
       return res.status(401).json({ error: 'Credenciales invalidas' });
     }
 
+    // El token lleva id/username/role: eso es lo que verifyToken despues
+    // copia a req.user, para no tener que ir a la BD en cada request.
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
       process.env.JWT_SECRET,

@@ -1,3 +1,4 @@
+// Mismo patron que titleService.ts/debateService.ts.
 import { apiFetch } from './api';
 
 export interface RatingSummary {

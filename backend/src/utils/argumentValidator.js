@@ -1,4 +1,5 @@
-// Validacion de argumentos y votos (mismo patron que validators.js).
+// Validacion de argumentos y votos (mismo patron manual que validators.js:
+// sin libreria externa, solo funciones que devuelven { errors, data }).
 
 const STANCES = ['a_favor', 'en_contra', 'neutral'];
 

@@ -20,7 +20,8 @@ async function summary(req, res, next) {
   }
 }
 
-// POST /api/ratings   (requiere login; 1 a 5; se actualiza si ya habias calificado este titulo)
+// POST /api/ratings   (requiere login; 1 a 5; se actualiza si ya habias
+// calificado este titulo -- el upsert lo hace ratingService con ON CONFLICT)
 async function create(req, res, next) {
   try {
     const { errors, title_id, value } = validateRating(req.body);
