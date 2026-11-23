@@ -12,6 +12,7 @@ CREATE DATABASE cinedebate;
 \connect cinedebate
 
 -- Limpieza (permite volver a ejecutar el script en desarrollo)
+DROP TABLE IF EXISTS ratings        CASCADE;
 DROP TABLE IF EXISTS argument_votes CASCADE;
 DROP TABLE IF EXISTS arguments CASCADE;
 DROP TABLE IF EXISTS debates   CASCADE;
@@ -65,16 +66,18 @@ CREATE TABLE debates (
 );
 
 -- ---------------------------------------------------------------------
--- Argumentos dentro de un debate (con postura y respuestas anidadas)
+-- Argumentos dentro de un debate (con postura, respuestas anidadas y
+-- marca opcional de spoiler para RF anti-spoiler)
 -- ---------------------------------------------------------------------
 CREATE TABLE arguments (
-    id         INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    debate_id  INT         NOT NULL REFERENCES debates(id)   ON DELETE CASCADE,
-    user_id    INT         NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
-    parent_id  INT         REFERENCES arguments(id)          ON DELETE CASCADE,
-    stance     VARCHAR(10) NOT NULL,
-    content    TEXT        NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    id           INT         GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    debate_id    INT         NOT NULL REFERENCES debates(id)   ON DELETE CASCADE,
+    user_id      INT         NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
+    parent_id    INT         REFERENCES arguments(id)          ON DELETE CASCADE,
+    stance       VARCHAR(10) NOT NULL,
+    content      TEXT        NOT NULL,
+    has_spoilers BOOLEAN     NOT NULL DEFAULT FALSE,
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT arguments_stance_chk  CHECK (stance IN ('a_favor', 'en_contra', 'neutral')),
     CONSTRAINT arguments_content_chk CHECK (char_length(content) >= 10)
 );
@@ -94,20 +97,52 @@ CREATE TABLE argument_votes (
     CONSTRAINT argument_votes_unique    UNIQUE (argument_id, user_id)
 );
 
+-- ---------------------------------------------------------------------
+-- Calificacion de 1 a 5 estrellas de un titulo (un voto por usuario,
+-- mismo mecanismo que argument_votes)
+-- ---------------------------------------------------------------------
+CREATE TABLE ratings (
+    id         INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title_id   INT      NOT NULL REFERENCES titles(id) ON DELETE CASCADE,
+    user_id    INT      NOT NULL REFERENCES users(id)  ON DELETE CASCADE,
+    value      SMALLINT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT ratings_value_chk CHECK (value BETWEEN 1 AND 5),
+    CONSTRAINT ratings_unique    UNIQUE (title_id, user_id)
+);
+
 -- Indices para consultas frecuentes
 CREATE INDEX idx_titles_genre        ON titles(genre);
 CREATE INDEX idx_debates_title       ON debates(title_id);
 CREATE INDEX idx_arguments_debate    ON arguments(debate_id);
 CREATE INDEX idx_argument_votes_arg  ON argument_votes(argument_id);
+CREATE INDEX idx_ratings_title       ON ratings(title_id);
 
 -- ---------------------------------------------------------------------
 -- Datos iniciales de prueba (catalogo)
 -- Nota: los usuarios se crean desde la API (registro) para que la
--- contrasena quede hasheada con bcrypt.
+-- contrasena quede hasheada con bcrypt. El primer admin se promueve
+-- a mano con un UPDATE (ver README-API.md), no existe endpoint para crear
+-- administradores desde la API.
 -- ---------------------------------------------------------------------
 INSERT INTO titles (name, type, genre, release_year, synopsis) VALUES
-('Breaking Bad',  'serie',    'Drama',           2008, 'Un profesor de quimica se convierte en fabricante de metanfetamina.'),
-('Inception',     'pelicula', 'Ciencia ficcion', 2010, 'Un ladron entra en los suenos para plantar una idea.'),
-('Parasite',      'pelicula', 'Thriller',        2019, 'Una familia pobre se infiltra en la vida de una familia rica.'),
-('The Godfather', 'pelicula', 'Crimen',          1972, 'La saga de la familia mafiosa Corleone.'),
-('Stranger Things','serie',   'Ciencia ficcion', 2016, 'Un grupo de ninos enfrenta fuerzas sobrenaturales en su pueblo.');
+('Breaking Bad',        'serie',    'Drama',           2008, 'Un profesor de quimica se convierte en fabricante de metanfetamina.'),
+('Inception',           'pelicula', 'Ciencia ficcion', 2010, 'Un ladron entra en los suenos para plantar una idea.'),
+('Parasite',            'pelicula', 'Thriller',        2019, 'Una familia pobre se infiltra en la vida de una familia rica.'),
+('The Godfather',       'pelicula', 'Crimen',          1972, 'La saga de la familia mafiosa Corleone.'),
+('Stranger Things',     'serie',    'Ciencia ficcion', 2016, 'Un grupo de ninos enfrenta fuerzas sobrenaturales en su pueblo.'),
+('The Office',          'serie',    'Comedia',         2005, 'El dia a dia de los empleados de una oficina de papel en Scranton.'),
+('Game of Thrones',     'serie',    'Fantasia',        2011, 'Varias familias nobles luchan por el control de los Siete Reinos.'),
+('Pulp Fiction',        'pelicula', 'Crimen',          1994, 'Historias cruzadas de criminales en Los Angeles.'),
+('The Dark Knight',     'pelicula', 'Accion',          2008, 'Batman enfrenta al Joker, un criminal que siembra el caos en Gotham.'),
+('Interstellar',        'pelicula', 'Ciencia ficcion', 2014, 'Un grupo de astronautas busca un nuevo hogar para la humanidad.'),
+('The Mandalorian',     'serie',    'Ciencia ficcion', 2019, 'Un cazarrecompensas protege a un misterioso nino en los confines de la galaxia.'),
+('Friends',             'serie',    'Comedia',         1994, 'Seis amigos viven sus veintes y treintas en Nueva York.'),
+('The Shawshank Redemption', 'pelicula', 'Drama',      1994, 'Un hombre condenado injustamente busca esperanza dentro de una prision.'),
+('Black Mirror',        'serie',    'Ciencia ficcion', 2011, 'Historias independientes sobre los efectos oscuros de la tecnologia.'),
+('La La Land',          'pelicula', 'Musical',         2016, 'Un pianista de jazz y una actriz persiguen sus suenos en Los Angeles.'),
+('Chernobyl',           'serie',    'Drama',           2019, 'La reconstruccion del desastre nuclear de Chernobyl y su encubrimiento.'),
+('Spirited Away',       'pelicula', 'Animacion',       2001, 'Una nina queda atrapada en un mundo magico gobernado por espiritus.'),
+('Better Call Saul',    'serie',    'Drama',           2015, 'Los origenes de un abogado que termina convertido en Saul Goodman.'),
+('Whiplash',            'pelicula', 'Drama',           2014, 'Un joven baterista es presionado al limite por un profesor implacable.'),
+('The Queen''s Gambit', 'serie',    'Drama',           2020, 'Una joven prodigio del ajedrez lucha contra sus propios demonios.');

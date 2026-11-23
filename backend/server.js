@@ -7,6 +7,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const titleRoutes = require('./src/routes/titleRoutes');
 const debateRoutes = require('./src/routes/debateRoutes');
 const argumentRoutes = require('./src/routes/argumentRoutes');
+const ratingRoutes = require('./src/routes/ratingRoutes');
 
 // El servidor no debe arrancar sin secreto JWT
 if (!process.env.JWT_SECRET) {
@@ -44,6 +45,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/titles', titleRoutes);
 app.use('/api/debates', debateRoutes);
 app.use('/api/arguments', argumentRoutes);
+app.use('/api/ratings', ratingRoutes);
 
 // --- 404 y manejo de errores ---
 app.use((req, res) => {

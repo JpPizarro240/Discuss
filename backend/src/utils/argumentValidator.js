@@ -1,4 +1,4 @@
-// Validacion y limpieza de argumentos y votos (mismo patron que validators.js).
+// Validacion de argumentos y votos (mismo patron que validators.js).
 
 const STANCES = ['a_favor', 'en_contra', 'neutral'];
 
@@ -39,6 +39,9 @@ function validateArgument(body) {
       data.parent_id = parentId;
     }
   }
+
+  // has_spoilers: opcional, por defecto false (funcion anti-spoiler)
+  data.has_spoilers = input.has_spoilers === true;
 
   return { errors, data };
 }

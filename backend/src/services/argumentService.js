@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 // Todas las consultas usan parametros ($1, $2...) para evitar inyeccion SQL.
-const COLUMNS = 'id, debate_id, user_id, parent_id, stance, content, created_at';
+const COLUMNS = 'id, debate_id, user_id, parent_id, stance, content, has_spoilers, created_at';
 
 async function listByDebate(debate_id) {
   const { rows } = await pool.query(
@@ -16,12 +16,12 @@ async function getById(id) {
   return rows[0] || null;
 }
 
-async function create({ debate_id, user_id, parent_id = null, stance, content }) {
+async function create({ debate_id, user_id, parent_id = null, stance, content, has_spoilers = false }) {
   const { rows } = await pool.query(
-    `INSERT INTO arguments (debate_id, user_id, parent_id, stance, content)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO arguments (debate_id, user_id, parent_id, stance, content, has_spoilers)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING ${COLUMNS}`,
-    [debate_id, user_id, parent_id, stance, content]
+    [debate_id, user_id, parent_id, stance, content, has_spoilers]
   );
   return rows[0];
 }
