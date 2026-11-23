@@ -5,6 +5,8 @@ const cors = require('cors');
 const pool = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
 const titleRoutes = require('./src/routes/titleRoutes');
+const debateRoutes = require('./src/routes/debateRoutes');
+const argumentRoutes = require('./src/routes/argumentRoutes');
 
 // El servidor no debe arrancar sin secreto JWT
 if (!process.env.JWT_SECRET) {
@@ -40,6 +42,8 @@ app.get('/api/health', async (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/titles', titleRoutes);
+app.use('/api/debates', debateRoutes);
+app.use('/api/arguments', argumentRoutes);
 
 // --- 404 y manejo de errores ---
 app.use((req, res) => {

@@ -12,6 +12,7 @@ CREATE DATABASE cinedebate;
 \connect cinedebate
 
 -- Limpieza (permite volver a ejecutar el script en desarrollo)
+DROP TABLE IF EXISTS argument_votes CASCADE;
 DROP TABLE IF EXISTS arguments CASCADE;
 DROP TABLE IF EXISTS debates   CASCADE;
 DROP TABLE IF EXISTS titles    CASCADE;
@@ -78,10 +79,26 @@ CREATE TABLE arguments (
     CONSTRAINT arguments_content_chk CHECK (char_length(content) >= 10)
 );
 
+-- ---------------------------------------------------------------------
+-- Votos de utilidad sobre un argumento (RF-05: un voto por usuario,
+-- util o no util; no se permite votar el propio argumento, esa regla
+-- se valida en el backend porque necesita comparar con el usuario autenticado)
+-- ---------------------------------------------------------------------
+CREATE TABLE argument_votes (
+    id          INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    argument_id INT      NOT NULL REFERENCES arguments(id) ON DELETE CASCADE,
+    user_id     INT      NOT NULL REFERENCES users(id)     ON DELETE CASCADE,
+    value       SMALLINT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT argument_votes_value_chk CHECK (value IN (1, -1)),
+    CONSTRAINT argument_votes_unique    UNIQUE (argument_id, user_id)
+);
+
 -- Indices para consultas frecuentes
-CREATE INDEX idx_titles_genre     ON titles(genre);
-CREATE INDEX idx_debates_title    ON debates(title_id);
-CREATE INDEX idx_arguments_debate ON arguments(debate_id);
+CREATE INDEX idx_titles_genre        ON titles(genre);
+CREATE INDEX idx_debates_title       ON debates(title_id);
+CREATE INDEX idx_arguments_debate    ON arguments(debate_id);
+CREATE INDEX idx_argument_votes_arg  ON argument_votes(argument_id);
 
 -- ---------------------------------------------------------------------
 -- Datos iniciales de prueba (catalogo)
